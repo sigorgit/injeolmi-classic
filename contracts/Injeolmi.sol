@@ -10,30 +10,58 @@ import "./interfaces/IInjeolmi.sol";
 contract Injeolmi is Ownable, IInjeolmi {
     using SafeMath for uint256;
 
-    string  constant public NAME = "Injeolmi";
-    string  constant public SYMBOL = "IJM";
+    string constant public NAME = "Injeolmi";
+    string constant public SYMBOL = "IJM";
 
     // 1억개 발행, 추가 발행 없음
     uint256 constant public COIN = 100000000 ** uint256(DECIMALS);
-    uint8   constant public DECIMALS = 18;
+    uint8 constant public DECIMALS = 8;
 
     uint256 private _totalSupply;
+    uint256 private _totalDist;
+
     mapping(address => uint256) private balances;
     mapping(address => mapping(address => uint256)) private allowed;
+    mapping(address => bool) private excluded;
+
+    function exclude(address addr) external onlyOwner {
+        excluded[addr] = true;
+    }
+
+    function include(address addr) external onlyOwner {
+        excluded[addr] = false;
+    }
 
     function name() external pure returns (string memory) { return NAME; }
     function symbol() external pure returns (string memory) { return SYMBOL; }
     function decimals() external pure returns (uint8) { return DECIMALS; }
     function totalSupply() external view returns (uint256) { return _totalSupply; }
-    
+
     function balanceOf(address user) external view returns (uint256 balance) {
-        return balances[user];
+        uint256 balance = balances[user];
+        return balance.add(_totalDist.mul(balance).div(_totalSupply));
+    }
+
+    function _transfer(address from, address to, uint256 amount) private {
+        uint256 realAmount = amount.mul(_totalSupply).div(_totalSupply.add(_totalDist));
+        balances[from] = balances[from].sub(realAmount);
+        if (excluded[from] != true) {
+
+            // 9% 떡돌리기
+            uint256 dist = realAmount.mul(9).div(100);
+            // 1% 떡방앗간 팁
+            uint256 fee = realAmount.div(100);
+
+            _totalDist = _totalDist.add(dist);
+            realAmount = realAmount.sub(dist).sub(fee);
+            balances[owner()] = balances[owner()].add(fee);
+        }
+        balances[to] = balances[to].add(realAmount);
+        emit Transfer(from, to, amount);
     }
 
     function transfer(address to, uint256 amount) public returns (bool success) {
-        balances[msg.sender] = balances[msg.sender].sub(amount);
-        balances[to] = balances[to].add(amount);
-        emit Transfer(msg.sender, to, amount);
+        _transfer(msg.sender, to, amount);
         return true;
     }
 
@@ -52,9 +80,7 @@ contract Injeolmi is Ownable, IInjeolmi {
         if (_allowance != uint256(-1)) {
             allowed[from][msg.sender] = _allowance.sub(amount);
         }
-        balances[from] = balances[from].sub(amount);
-        balances[to] = balances[to].add(amount);
-        emit Transfer(from, to, amount);
+        _transfer(from, to, amount);
         return true;
     }
 }

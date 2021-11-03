@@ -13,25 +13,25 @@ contract InjeolmiPool is IInjeolmiPool {
         ijm = _ijm;
     }
 
-    function swapToIJM() payable external {
-        uint256 totalKlay = address(this).balance;
-        uint256 totalIJM = ijm.balanceOf(address(this));
+    function swapToIJM() external payable {
+        uint256 lastKlay = address(this).balance;
+        uint256 lastIJM = ijm.balanceOf(address(this));
 
-        uint256 _ijm = totalIJM.mul(msg.value).div(totalKlay);
+        uint256 newIJM = lastKlay.mul(lastIJM).div(lastKlay.add(msg.value));
 
-        ijm.transfer(msg.sender, _ijm);
- 
+        ijm.transfer(msg.sender, lastIJM.sub(newIJM));
+
         emit SwapToIJM(msg.sender, msg.value);
     }
 
     function swapToKlay(uint256 amount) external {
-        uint256 totalIJM = ijm.balanceOf(address(this));
-        uint256 totalKlay = address(this).balance;
+        uint256 lastKlay = address(this).balance;
+        uint256 lastIJM = ijm.balanceOf(address(this));
 
-        uint256 klay = totalKlay.mul(amount).div(totalIJM).mul(9).div(10);
+        uint256 newKlay = lastIJM.mul(lastKlay).div(lastIJM.add(amount.mul(9).div(10)));
 
         ijm.transferFrom(msg.sender, address(this), amount);
-        msg.sender.transfer(klay);
+        msg.sender.transfer(lastKlay.sub(newKlay));
 
         emit SwapToKlay(msg.sender, amount);
     }

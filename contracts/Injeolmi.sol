@@ -79,6 +79,9 @@ contract Injeolmi is Ownable, Pausable, IInjeolmi {
         }
     }
 
+    /**
+        Should update all of token holders not only EOAs but also the contracts and the owner.
+    */
     function finishUpdatingMultiplier() external onlyOwner whenPaused {
         accMultiplier = MULTIPLIER;
         resettingCount = resettingCount + 1;
@@ -122,7 +125,7 @@ contract Injeolmi is Ownable, Pausable, IInjeolmi {
             }
         }
 
-        if (amount == uint256(-1)) amount = fromUpdatedBalance; //TODO: check
+        if (amount == uint256(-1)) amount = fromUpdatedBalance; //TODO: it works well but is this needed?
 
         if (excluded[from]) {
             _fromInfo.lastBalance = fromUpdatedBalance.sub(amount);

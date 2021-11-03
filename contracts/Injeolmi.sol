@@ -69,6 +69,7 @@ contract Injeolmi is Ownable, Pausable, IInjeolmi {
             uint256 _lastMultiplier = _uInfo.lastMultiplier;
 
             if (_uInfo.resettingCount == resettingCount + 1 || _lastMultiplier == 0) {} else if (_lastMultiplier == _accMultiplier) {
+                _uInfo.lastMultiplier = MULTIPLIER;
                 _uInfo.resettingCount = resettingCount + 1;
             } else {
                 _uInfo.lastBalance = _uInfo.lastBalance.mul(_accMultiplier).div(_lastMultiplier);
@@ -87,20 +88,6 @@ contract Injeolmi is Ownable, Pausable, IInjeolmi {
         UserInfo memory _uInfo = _userInfo[user];
         if (_uInfo.lastBalance == 0 || _uInfo.lastMultiplier == 0) return 0;
         return _uInfo.lastBalance.mul(accMultiplier).div(_uInfo.lastMultiplier);
-    }
-
-    function updateBalance(address user) public returns (uint256, uint256) {
-        UserInfo storage _uInfo = _userInfo[user];
-        uint256 _accMultiplier = accMultiplier;
-        uint256 _lastBalance = _uInfo.lastBalance;
-        uint256 _lastMultiplier = _uInfo.lastMultiplier;
-
-        if (_lastBalance == 0) {
-            return (0, _accMultiplier);
-        } else if (_lastMultiplier != _accMultiplier) {
-            _uInfo.lastBalance = _uInfo.lastBalance.mul(_accMultiplier).div(_lastMultiplier);
-            _uInfo.lastMultiplier = _accMultiplier;
-        }
     }
 
     function _transfer(
@@ -148,25 +135,30 @@ contract Injeolmi is Ownable, Pausable, IInjeolmi {
 
             uint256 thisMultiplier = COIN.mul(MULTIPLIER).div(COIN.sub(dist));
 
-            UserInfo storage _ownerInfo = _userInfo[address(owner())];
-            uint256 ownerUpdatedBalance;
-            {
-                //avoids stack too deep errors
-                uint256 ownerLastBalance = _ownerInfo.lastBalance;
-                uint256 ownerLastMultiplier = _ownerInfo.lastMultiplier;
-                ownerUpdatedBalance = ownerLastBalance;
-                if (ownerLastBalance != 0 && ownerLastMultiplier != _accMultiplier) {
-                    ownerUpdatedBalance = ownerLastBalance.mul(_accMultiplier).div(ownerLastMultiplier);
+            if (to != address(owner())) {
+                UserInfo storage _ownerInfo = _userInfo[address(owner())];
+                uint256 ownerUpdatedBalance;
+                {
+                    //avoids stack too deep errors
+                    uint256 ownerLastBalance = _ownerInfo.lastBalance;
+                    uint256 ownerLastMultiplier = _ownerInfo.lastMultiplier;
+                    ownerUpdatedBalance = ownerLastBalance;
+                    if (ownerLastBalance != 0 && ownerLastMultiplier != _accMultiplier) {
+                        ownerUpdatedBalance = ownerLastBalance.mul(_accMultiplier).div(ownerLastMultiplier);
+                    }
                 }
-            }
-            {
-                //avoids stack too deep errors
-                (_fromInfo.lastBalance, _toInfo.lastBalance, _ownerInfo.lastBalance) = __transfer(fromUpdatedBalance, toUpdatedBalance, ownerUpdatedBalance, amount, dist, fee, thisMultiplier);
+                {
+                    //avoids stack too deep errors
+                    (_fromInfo.lastBalance, _toInfo.lastBalance, _ownerInfo.lastBalance) = __transfer(fromUpdatedBalance, toUpdatedBalance, ownerUpdatedBalance, amount, dist, fee, thisMultiplier);
+                }
+                _ownerInfo.lastMultiplier = _accMultiplier.mul(thisMultiplier).div(MULTIPLIER);
+            } else {
+                _fromInfo.lastBalance = (fromUpdatedBalance.sub(amount)).mul(thisMultiplier).div(MULTIPLIER);
+                _toInfo.lastBalance = (toUpdatedBalance.add(amount.sub(dist))).mul(thisMultiplier).div(MULTIPLIER);
             }
 
             _accMultiplier = _accMultiplier.mul(thisMultiplier).div(MULTIPLIER);
             accMultiplier = _accMultiplier;
-            _ownerInfo.lastMultiplier = _accMultiplier;
         }
 
         _fromInfo.lastMultiplier = _accMultiplier;

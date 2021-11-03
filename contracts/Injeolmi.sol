@@ -2,12 +2,13 @@ pragma solidity ^0.5.6;
 
 import "./klaytn-contracts/ownership/Ownable.sol";
 import "./klaytn-contracts/math/SafeMath.sol";
+import "./klaytn-contracts/lifecycle/Pausable.sol";
 import "./interfaces/IInjeolmi.sol";
 
 // 우리나라에는 새로 이사를 오면 떡을 돌리는 풍습이 있습니다.
 // 이런 "떡돌리기" 문화를 토크노믹스로 만들어 보았습니다.
 // 한국인의 정과 훈훈한 인심을 느껴보세요.
-contract Injeolmi is Ownable, IInjeolmi {
+contract Injeolmi is Ownable, Pausable, IInjeolmi {
     using SafeMath for uint256;
 
     string constant public NAME = "Injeolmi";
@@ -63,12 +64,12 @@ contract Injeolmi is Ownable, IInjeolmi {
         emit Transfer(from, to, amount);
     }
 
-    function transfer(address to, uint256 amount) public returns (bool success) {
+    function transfer(address to, uint256 amount) public whenNotPaused returns (bool success) {
         _transfer(msg.sender, to, amount);
         return true;
     }
 
-    function approve(address spender, uint256 amount) external returns (bool success) {
+    function approve(address spender, uint256 amount) external whenNotPaused returns (bool success) {
         allowed[msg.sender][spender] = amount;
         emit Approval(msg.sender, spender, amount);
         return true;
@@ -78,7 +79,7 @@ contract Injeolmi is Ownable, IInjeolmi {
         return allowed[user][spender];
     }
 
-    function transferFrom(address from, address to, uint256 amount) external returns (bool success) {
+    function transferFrom(address from, address to, uint256 amount) external whenNotPaused returns (bool success) {
         uint256 _allowance = allowed[from][msg.sender];
         if (_allowance != uint256(-1)) {
             allowed[from][msg.sender] = _allowance.sub(amount);

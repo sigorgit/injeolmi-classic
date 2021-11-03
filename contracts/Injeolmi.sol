@@ -36,6 +36,10 @@ contract Injeolmi is Ownable, IInjeolmi {
     function decimals() external pure returns (uint8) { return DECIMALS; }
     function totalSupply() external pure returns (uint256) { return COIN; }
 
+    constructor() public {
+        _userInfo[msg.sender].lastBalance = COIN;
+    }
+
     function balanceOf(address user) external view returns (uint256 balance) {
         uint256 balance = balances[user];
         return balance.add(_totalDist.mul(balance).div(COIN));

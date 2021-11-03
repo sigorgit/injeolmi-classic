@@ -17,7 +17,6 @@ contract Injeolmi is Ownable, IInjeolmi {
     uint256 constant public COIN = 100000000 ** uint256(DECIMALS);
     uint8 constant public DECIMALS = 8;
 
-    uint256 private _totalSupply;
     uint256 private _totalDist;
 
     mapping(address => uint256) private balances;
@@ -35,15 +34,15 @@ contract Injeolmi is Ownable, IInjeolmi {
     function name() external pure returns (string memory) { return NAME; }
     function symbol() external pure returns (string memory) { return SYMBOL; }
     function decimals() external pure returns (uint8) { return DECIMALS; }
-    function totalSupply() external view returns (uint256) { return _totalSupply; }
+    function totalSupply() external pure returns (uint256) { return COIN; }
 
     function balanceOf(address user) external view returns (uint256 balance) {
         uint256 balance = balances[user];
-        return balance.add(_totalDist.mul(balance).div(_totalSupply));
+        return balance.add(_totalDist.mul(balance).div(COIN));
     }
 
     function _transfer(address from, address to, uint256 amount) private {
-        uint256 realAmount = amount.mul(_totalSupply).div(_totalSupply.add(_totalDist));
+        uint256 realAmount = amount.mul(COIN).div(COIN.add(_totalDist));
         balances[from] = balances[from].sub(realAmount);
         if (excluded[from] != true) {
 

@@ -8,7 +8,7 @@ interface IInjeolmi {
     function name() external pure returns (string memory);
     function symbol() external pure returns (string memory);
     function decimals() external pure returns (uint8);
-    function totalSupply() external view returns (uint256);
+    function totalSupply() external pure returns (uint256);
 
     function balanceOf(address owner) external view returns (uint256 balance);
     function transfer(address to, uint256 amount) external returns (bool success);

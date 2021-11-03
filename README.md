@@ -1,2 +1,7 @@
 # injeolmi
 인절미
+
+## Mainnet
+- Injeolmi: [0x215A86F9215a7A0592118c45a87C168c1A1b3C75](https://scope.klaytn.com/account/0x215A86F9215a7A0592118c45a87C168c1A1b3C75)
+- InjeolmiPool: [0xfABD2A8482c4Da6361e5B801538d937CC0BD21C1](https://scope.klaytn.com/account/0xfABD2A8482c4Da6361e5B801538d937CC0BD21C1)
+- Airdrop: [0x05f2b0c56826f4244525d96C0004CB0032CD9709](https://scope.klaytn.com/account/0x05f2b0c56826f4244525d96C0004CB0032CD9709)

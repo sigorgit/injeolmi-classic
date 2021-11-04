@@ -173,7 +173,10 @@ interface IInjeolmi {
     function name() external pure returns (string memory);
     function symbol() external pure returns (string memory);
     function decimals() external pure returns (uint8);
-    function totalSupply() external view returns (uint256);
+    function totalSupply() external pure returns (uint256);
+
+    function excluded(address user) external view returns (bool);
+    function _userInfo(address user) external view returns (uint256 lastBalance, uint256 lastMultiplier, uint256 resettingCount);
 
     function balanceOf(address owner) external view returns (uint256 balance);
     function transfer(address to, uint256 amount) external returns (bool success);
@@ -191,26 +194,40 @@ contract InjeolmiPool is IInjeolmiPool {
         ijm = _ijm;
     }
 
-    function swapToIJM() payable external {
-        uint256 totalKlay = address(this).balance;
-        uint256 totalIJM = ijm.balanceOf(address(this));
+    function () payable external {}
 
-        uint256 _ijm = totalIJM.mul(msg.value).div(totalKlay);
+    function swapToIJM() external payable {
+        uint256 newKlay = address(this).balance;
+        uint256 lastIJM = ijm.balanceOf(address(this));
 
-        ijm.transfer(msg.sender, _ijm);
- 
+        uint256 newIJM = (newKlay.sub(msg.value)).mul(lastIJM).div(newKlay);
+
+        ijm.transfer(msg.sender, lastIJM.sub(newIJM));
+
         emit SwapToIJM(msg.sender, msg.value);
     }
 
     function swapToKlay(uint256 amount) external {
-        uint256 totalIJM = ijm.balanceOf(address(this));
-        uint256 totalKlay = address(this).balance;
+        uint256 lastKlay = address(this).balance;
+        uint256 lastIJM = ijm.balanceOf(address(this));
 
-        uint256 klay = totalKlay.mul(amount).div(totalIJM).mul(9).div(10);
+        uint256 newKlay = lastIJM.mul(lastKlay).div(lastIJM.add(amount.mul(9).div(10)));
 
         ijm.transferFrom(msg.sender, address(this), amount);
-        msg.sender.transfer(klay);
+        msg.sender.transfer(lastKlay.sub(newKlay));
 
         emit SwapToKlay(msg.sender, amount);
+    }
+
+    function addLiquidity() external payable {
+        uint256 lastKlay = (address(this).balance).sub(msg.value);
+        uint256 lastIJM = ijm.balanceOf(address(this));
+
+        uint256 inputIJM = lastIJM.mul(msg.value).div(lastKlay);
+        if(ijm.excluded(msg.sender)) {
+            ijm.transferFrom(msg.sender, address(this), inputIJM);
+        } else {
+            ijm.transferFrom(msg.sender, address(this), inputIJM.mul(10).div(9));
+        }
     }
 }

@@ -42,9 +42,9 @@ contract InjeolmiPool is IInjeolmiPool {
 
         uint256 inputIJM = lastIJM.mul(msg.value).div(lastKlay);
         if(ijm.excluded(msg.sender)) {
-            ijm.transferFrom(msg.sender, address(this), lastIJM);
+            ijm.transferFrom(msg.sender, address(this), inputIJM);
         } else {
-            ijm.transferFrom(msg.sender, address(this), lastIJM.mul(10).div(9));
+            ijm.transferFrom(msg.sender, address(this), inputIJM.mul(10).div(9));
         }
     }
 }

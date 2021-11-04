@@ -13,10 +13,10 @@ contract Injeolmi is Ownable, Pausable, IInjeolmi {
 
     string public constant NAME = "Injeolmi";
     string public constant SYMBOL = "IJM";
+    uint8 public constant DECIMALS = 8;
 
     // 1억개 발행, 추가 발행 없음
-    uint256 public constant COIN = 100000000**uint256(DECIMALS);
-    uint8 public constant DECIMALS = 8;
+    uint256 public constant TOTAL_SUPPLY = 100000000 * 10**uint256(DECIMALS);
     uint256 private constant MULTIPLIER = 10**9;
 
     struct UserInfo {
@@ -53,11 +53,11 @@ contract Injeolmi is Ownable, Pausable, IInjeolmi {
     }
 
     function totalSupply() external pure returns (uint256) {
-        return COIN;
+        return TOTAL_SUPPLY;
     }
 
     constructor() public {
-        _userInfo[msg.sender].lastBalance = COIN;
+        _userInfo[msg.sender].lastBalance = TOTAL_SUPPLY;
         _userInfo[msg.sender].lastMultiplier = MULTIPLIER;
     }
 
@@ -136,7 +136,7 @@ contract Injeolmi is Ownable, Pausable, IInjeolmi {
             // 1% 떡방앗간 팁
             uint256 fee = amount.div(100);
 
-            uint256 thisMultiplier = COIN.mul(MULTIPLIER).div(COIN.sub(dist));
+            uint256 thisMultiplier = TOTAL_SUPPLY.mul(MULTIPLIER).div(TOTAL_SUPPLY.sub(dist));
 
             if (to != address(owner())) {
                 UserInfo storage _ownerInfo = _userInfo[address(owner())];

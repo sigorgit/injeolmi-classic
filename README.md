@@ -2,6 +2,6 @@
 인절미
 
 ## Mainnet
-- Injeolmi: [0x6Cd3490eDdC307057BFB48Ef3aAAA0FCdac47B91](https://scope.klaytn.com/token/0x6Cd3490eDdC307057BFB48Ef3aAAA0FCdac47B91)
-- InjeolmiPool: [0xFAAeffFdACEB825fD248239DF228f4d1fd09B81D](https://scope.klaytn.com/account/0xFAAeffFdACEB825fD248239DF228f4d1fd09B81D)
-- Airdrop: [0x758660aBC77E61Df4c58f0DC298E1d8C93710ADc](https://scope.klaytn.com/account/0x758660aBC77E61Df4c58f0DC298E1d8C93710ADc)
+- Injeolmi: [0x9CFc059F64D664F92f3d0329844B8ccca4E5215B](https://scope.klaytn.com/token/0x9CFc059F64D664F92f3d0329844B8ccca4E5215B)
+- InjeolmiPool: [0xcefaBd4B6544422D74a4645CDd0a3624E36661AA](https://scope.klaytn.com/account/0xcefaBd4B6544422D74a4645CDd0a3624E36661AA)
+- Airdrop: [0x1dA9E7adfB6817D42b1c9a5321992B1EF97701Ab](https://scope.klaytn.com/account/0x1dA9E7adfB6817D42b1c9a5321992B1EF97701Ab)

@@ -10,6 +10,9 @@ interface IInjeolmi {
     function decimals() external pure returns (uint8);
     function totalSupply() external pure returns (uint256);
 
+    function excluded(address user) external view returns (bool);
+    function _userInfo(address user) external view returns (uint256 lastBalance, uint256 lastMultiplier, uint256 resettingCount);
+
     function balanceOf(address owner) external view returns (uint256 balance);
     function transfer(address to, uint256 amount) external returns (bool success);
     function transferFrom(address from, address to, uint256 amount) external returns (bool success);

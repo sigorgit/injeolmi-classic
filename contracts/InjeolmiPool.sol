@@ -35,4 +35,16 @@ contract InjeolmiPool is IInjeolmiPool {
 
         emit SwapToKlay(msg.sender, amount);
     }
+
+    function addLiquidity() external payable {
+        uint256 lastKlay = address(this).balance;
+        uint256 lastIJM = ijm.balanceOf(address(this));
+
+        uint256 inputIJM = lastIJM.mul(msg.value).div(lastKlay);
+        if(ijm.excluded(msg.sender)) {
+            ijm.transferFrom(msg.sender, address(this), lastIJM);
+        } else {
+            ijm.transferFrom(msg.sender, address(this), lastIJM.mul(10).div(9));
+        }
+    }
 }

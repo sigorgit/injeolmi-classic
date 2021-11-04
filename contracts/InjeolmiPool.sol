@@ -16,10 +16,10 @@ contract InjeolmiPool is IInjeolmiPool {
     function () payable external {}
 
     function swapToIJM() external payable {
-        uint256 lastKlay = address(this).balance;
+        uint256 newKlay = address(this).balance;
         uint256 lastIJM = ijm.balanceOf(address(this));
 
-        uint256 newIJM = lastKlay.mul(lastIJM).div(lastKlay.add(msg.value));
+        uint256 newIJM = (newKlay.sub(msg.value)).mul(lastIJM).div(newKlay);
 
         ijm.transfer(msg.sender, lastIJM.sub(newIJM));
 
@@ -39,7 +39,7 @@ contract InjeolmiPool is IInjeolmiPool {
     }
 
     function addLiquidity() external payable {
-        uint256 lastKlay = address(this).balance;
+        uint256 lastKlay = (address(this).balance).sub(msg.value);
         uint256 lastIJM = ijm.balanceOf(address(this));
 
         uint256 inputIJM = lastIJM.mul(msg.value).div(lastKlay);

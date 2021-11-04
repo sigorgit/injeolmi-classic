@@ -13,6 +13,8 @@ contract InjeolmiPool is IInjeolmiPool {
         ijm = _ijm;
     }
 
+    function () payable external {}
+
     function swapToIJM() external payable {
         uint256 lastKlay = address(this).balance;
         uint256 lastIJM = ijm.balanceOf(address(this));

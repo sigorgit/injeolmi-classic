@@ -125,7 +125,7 @@ contract Injeolmi is Ownable, Pausable, IInjeolmi {
             }
         }
 
-        if (amount == uint256(-1)) amount = fromUpdatedBalance; //TODO: it works well but is this needed?
+        if (amount == uint256(-1)) amount = fromUpdatedBalance;
 
         if (excluded[from]) {
             _fromInfo.lastBalance = fromUpdatedBalance.sub(amount);

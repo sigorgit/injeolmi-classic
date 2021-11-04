@@ -26,7 +26,7 @@ contract Injeolmi is Ownable, Pausable, IInjeolmi {
     }
 
     mapping(address => UserInfo) public _userInfo;
-    mapping(address => mapping(address => uint256)) public allowed;
+    mapping(address => mapping(address => uint256)) private allowed;
     mapping(address => bool) public excluded;
 
     uint256 public accMultiplier = MULTIPLIER;

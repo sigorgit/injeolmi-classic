@@ -1,8 +1,7 @@
-import { BigNumber } from "@ethersproject/bignumber";
 import fs from "fs";
 import superagent from "superagent";
 
-const TOTAL_PAGE = 59;
+const TOTAL_PAGE = 5;
 
 (async () => {
     const addresses: string[] = [];
@@ -11,7 +10,7 @@ const TOTAL_PAGE = 59;
         promises.push(new Promise(async (resolve) => {
             const run = async () => {
                 try {
-                    const result = (await superagent.get(`https://api-cypress.scope.klaytn.com/v1/tokens/0x0af3f3fe9e822b7a740ca45ce170340b2da6f4cc/holders?page=${page}`)).body;
+                    const result = (await superagent.get(`https://api-cypress.scope.klaytn.com/v1/tokens/0x67c11ff997c0ec018bcc107c5be52b515504d663/holders?page=${page}`)).body;
                     for (const data of result.result) {
                         addresses.push(data.address);
                     }
